@@ -1,4 +1,4 @@
-import argon2 from "argon2";
+import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { connectToDatabase } from "@/lib/db/connect";
@@ -49,9 +49,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           .exec();
         if (!admin) return null;
 
-        const passwordIsValid = await argon2.verify(
-          admin.passwordHash,
+        const passwordIsValid = await compare(
           parsedLogin.data.password,
+          admin.passwordHash,
         );
         if (!passwordIsValid) return null;
 

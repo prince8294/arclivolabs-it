@@ -1,5 +1,5 @@
 import { loadEnvConfig } from "@next/env";
-import argon2 from "argon2";
+import { hash } from "bcryptjs";
 import mongoose from "mongoose";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db/connect";
@@ -26,9 +26,7 @@ async function createInitialAdmin() {
     throw new Error("An admin account already exists; no account was changed.");
   }
 
-  const passwordHash = await argon2.hash(input.data.password, {
-    type: argon2.argon2id,
-  });
+  const passwordHash = await hash(input.data.password, 12);
   await Admin.create({
     email: input.data.email,
     passwordHash,
